@@ -1,6 +1,10 @@
 import re
 from datetime import datetime
 
+"""
+i am not happy about this abomination of a solution :(
+"""
+
 # test = """
 # [1518-11-01 00:00] Guard #10 begins shift
 # [1518-11-01 00:05] falls asleep
