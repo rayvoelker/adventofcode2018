@@ -1,5 +1,10 @@
 # get ready to heat up your room with how in inefficient this is!
 
+from datetime import datetime
+
+start_time = datetime.now()
+print('starting import at: \t\t{}'.format(start_time))
+
 test = """
 dabAcCaCBAcCcaDA
 """
@@ -44,6 +49,10 @@ print(count_reaction)
 print(input)
 
 print("length remaining: {}".format(len(input)))
+
+end_time = datetime.now()
+print('finished import at: \t\t{}'.format(end_time))
+print('total import time: \t\t{}'.format(end_time - start_time)) 
 
 # part 2
 
