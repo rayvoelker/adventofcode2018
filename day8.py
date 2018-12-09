@@ -25,10 +25,11 @@ One or more metadata entries (as specified in the header).
 filename = "day8_input.txt"
 input = open(filename).read().strip().split(" ")
 
-node = {"num_child_nodes": 0,
+node = {
+    "num_child_nodes": 0,
     "num_metadata_entries": 0,
-    "metadata_entries": []
-    # "child_nodes": [],
+    "metadata_entries": [],
+    "child_nodes": []
 }
 
 nodelist = list()
@@ -53,9 +54,10 @@ def create_node():
     return len(nodelist) - 1
 
 
-def add_metadata(node_number, num_metadata_entries):
+def add_metadata(node_number, num_metadata_entries, child_nodes):
     for i in range(num_metadata_entries):
-        nodelist[node_number]['metadata_entries'].append(input.pop(0))
+        nodelist[node_number]['metadata_entries'].append(int(input.pop(0)))
+    nodelist[node_number]['child_nodes'] = child_nodes.copy()
 
 
 def loop_for_children(node_number):
@@ -65,10 +67,12 @@ def loop_for_children(node_number):
     print("num children: {}".format(num_child_nodes))
     print("num metadata_entries: {}".format(num_metadata_entries))
 
+    child_nodes = list()
     for i in range(num_child_nodes):
-        loop_for_children(create_node())
+        child_nodes.append(create_node())
+        loop_for_children(child_nodes[-1])
 
-    add_metadata(node_number, num_metadata_entries)
+    add_metadata(node_number, num_metadata_entries, child_nodes)
 
 
 print(input)
