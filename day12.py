@@ -185,4 +185,6 @@ for i in range(len(pots)):
     if pots[i] == '#':
         count += (i + start_count)
 
+print(''.join(pots))
+
 print('sum index of pots with plants: {}'.format(count))
