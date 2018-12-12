@@ -1,61 +1,63 @@
 import re
 import pdb
 from collections import deque
+import sys
+sys.stdout.flush()
 
-initial_state = "#........#.#.#...###..###..###.#..#....###.###.#.#...####..##..##.#####..##...#.#.....#...###.#.####"
-input = """
-#..## => .
-##..# => #
-..##. => .
-.##.# => #
-..... => .
-..### => #
-###.# => #
-#.... => .
-#.##. => #
-.#.## => #
-#...# => .
-...## => .
-###.. => #
-.#..# => .
-####. => .
-....# => .
-##### => #
-.###. => .
-#..#. => .
-##... => #
-.#... => #
-#.#.# => .
-..#.. => #
-...#. => #
-##.#. => .
-.##.. => #
-.#.#. => .
-#.#.. => .
-..#.# => #
-#.### => .
-##.## => .
-.#### => #
-"""
+# initial_state = "#........#.#.#...###..###..###.#..#....###.###.#.#...####..##..##.#####..##...#.#.....#...###.#.####"
+# input = """
+# #..## => .
+# ##..# => #
+# ..##. => .
+# .##.# => #
+# ..... => .
+# ..### => #
+# ###.# => #
+# #.... => .
+# #.##. => #
+# .#.## => #
+# #...# => .
+# ...## => .
+# ###.. => #
+# .#..# => .
+# ####. => .
+# ....# => .
+# ##### => #
+# .###. => .
+# #..#. => .
+# ##... => #
+# .#... => #
+# #.#.# => .
+# ..#.. => #
+# ...#. => #
+# ##.#. => .
+# .##.. => #
+# .#.#. => .
+# #.#.. => .
+# ..#.# => #
+# #.### => .
+# ##.## => .
+# .#### => #
+# """
 
 # example ...
-# initial_state = "#..#.#..##......###...###"
-# input = """
-# ...## => #
-# ..#.. => #
-# .#... => #
-# .#.#. => #
-# .#.## => #
-# .##.. => #
-# .#### => #
-# #.#.# => #
-# #.### => #
-# ##.#. => #
-# ##.## => #
-# ###.. => #
-# ###.# => #
-# ####. => #
-# """
+initial_state = "#..#.#..##......###...###"
+input = """
+...## => #
+..#.. => #
+.#... => #
+.#.#. => #
+.#.## => #
+.##.. => #
+.#### => #
+#.#.# => #
+#.### => #
+##.#. => #
+##.## => #
+###.. => #
+###.# => #
+####. => #
+"""
 
 # turn the initial_state string into a list of characters
 pots = deque(initial_state)
@@ -69,7 +71,8 @@ rule = dict({
 rules = list()
 
 # count removed from front list
-c = list()
+cl = list()
+cr = list()
 
 # create the rules list...
 input = input.strip().split('\n')
@@ -98,28 +101,34 @@ def trim_pots():
     # for i in range(len(pots)):
     count_removed_left = 0
     while pots[0] == '.':
-        pot = pots.popleft()
-        count_removed_left +=1
+        pots.popleft()
+        # count_removed_left +=1
         # print('removed: {}'.format(pot))
 
-    print('count_removed_left: {}'.format(count_removed_left))
-
+    count_removed_right = 0
     while pots[-1] == '.':
-        pot = pots.pop()
-        # print('removed: {}'.format(pot))
+        pots.pop()
+        # count_removed_right +=1
 
-    return count_removed_left
+    # return count_removed_left, count_removed_right
 
 # pots at gen 0
 print('starting length: {}'.format)
 print(''.join(pots))
 
-for gen in range(20):
+gen_range = 20
+for gen in range(gen_range):
+
+    if gen % 5000 == 0:
+        print('{}...'.format(gen))
+        print(''.join(pots))
+        sys.stdout.flush()
 
     grow_pots()
 
     # pot to store our next gen in ...
     temp_pots = pots.copy()
+    list_pots = list(pots)
     # for rule in rules:
 
     for i in range(2, len(pots) - 2):
@@ -130,7 +139,7 @@ for gen in range(20):
         # print('slice end: {}'.format(slice_end))
 
         # convert the array slice to a string, so we can compare to our rule
-        sample = ''.join(list(pots)[i-2:i+3])
+        sample = ''.join(list_pots[i-2:i+3])
         # print('test:    {}'.format(rules[1]['test']))
         # print('sample:  {}'.format(sample))
         # print('---')
@@ -141,6 +150,7 @@ for gen in range(20):
                 # print('match ... {} == {}'.format(sample, rule['test']))
                 temp_pots[i] = rule['result']
                 rule_count += 1
+                # break
 
         # print('matched rules: {}'.format(rule_count))
         if rule_count == 0:
@@ -148,16 +158,23 @@ for gen in range(20):
         
     # replace the temp copy with the current version
     pots = temp_pots.copy()
-    count_removed = trim_pots()
-    c.append(count_removed)
+    trim_pots()
+    # cl.append(count_removed_left)
+    # cr.append(count_removed_right)
 
-    print(''.join(pots))
+    # print(''.join(pots))
 
-print("minimum removed from left: {}".format(min(c)))
-# start counting at min(c) - 1
-# start_count = (min(c) - 1) * -1
 
-start_count = -1
+
+# print('min removed left: {}'.format(min(cl)))
+# print('max removed left: {}'.format(max(cl)))
+
+# print('min removed right: {}'.format(min(cr)))
+# print('max removed right: {}'.format(max(cr)))
+
+start_count = -2
+# start_count = max(cr) - max(cl)
+
 print("start index count at: {}".format(start_count))
 
 # 3159 at start index count = -2 .. not right ...
@@ -169,4 +186,3 @@ for i in range(len(pots)):
         count += (i + start_count)
 
 print('sum index of pots with plants: {}'.format(count))
-
